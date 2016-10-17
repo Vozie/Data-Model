@@ -18,6 +18,12 @@ public class Customer {
 		this.lastName = lastName;
 	}
 	
+	public String getFirstName(){
+		return firstName;
+	}
+	public String getLastName(){
+		return lastName;
+	}
 	@Override 
 	public String toString(){
 		return String.format("Customer[id=%s, firstName ='%s', lastName='%s']", 
