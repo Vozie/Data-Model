@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +34,7 @@ public class CustomerController {
 	
 	@RequestMapping(value="{email}", method = RequestMethod.GET)
 	public ResponseEntity<Customer> getCustomerByEmail(@PathVariable("email") String email){
-		Customer customer = accessor.findSelected(email);
+		Customer customer = accessor.findByEmail(email);
 		if(customer == null){
 			return new ResponseEntity<Customer>(HttpStatus.NOT_FOUND);
 		}
@@ -41,4 +42,25 @@ public class CustomerController {
 			return new ResponseEntity<Customer>(customer,HttpStatus.OK);
 		}
 	}
+	
+	@RequestMapping(value="email", method=RequestMethod.PUT)
+	public ResponseEntity<Customer> updateCustomer(@Validated @RequestBody Customer updateCustomer, @PathVariable("email") String email){
+		Customer customerData = accessor.findByEmail(email);
+		if(customerData == null){
+			return new ResponseEntity<Customer>(HttpStatus.NOT_FOUND);
+		}
+		customerData.setEmail(updateCustomer.getEmail());
+		customerData.setFirstName(updateCustomer.getFirstName());
+		customerData.setLastName(updateCustomer.getLastName());
+		Customer updatedObject = accessor.save(customerData);
+		
+		return new ResponseEntity<Customer>(updatedObject,HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="email",method=RequestMethod.DELETE)
+	public void deleteTodo(@PathVariable("email") String email){
+		accessor.delete(email);
+	}
+	
+	
 }

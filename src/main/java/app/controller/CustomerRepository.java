@@ -11,7 +11,7 @@ public interface CustomerRepository extends MongoRepository<Customer,String> {
     public List<Customer> findByLastName(String lastName);
 	public Customer save(Customer customer);
 	public List<Customer> findAll();
-	public Customer findSelected(String email);
+	public Customer findByEmail(String email);
 	public Customer update(Customer customer);
 	public void delete(Customer customer);
 }
