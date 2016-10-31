@@ -16,25 +16,39 @@ import app.controller.CustomerRepository;
 import app.model.Customer;
 
 @RestController
-@RequestMapping("/api/Customer")
+@RequestMapping("/api/customer")
 public class CustomerController {
 
 	@Autowired
-	private CustomerRepository accessor;
+	private CustomerRepository customerAccessor;
 	
-	@RequestMapping(value="/findAllCustomers", method=RequestMethod.POST)
+	/**
+	 * GET request that will return all customers in the database.
+	 * @return
+	 */
+	@RequestMapping(value="/findall", method=RequestMethod.GET)
 	public List<Customer> getAllCustomers(){
-		return accessor.findAll();
+		return customerAccessor.findAll();
 	}
 
-	@RequestMapping(value="/createCustomer",method = RequestMethod.POST)
+	/**
+	 * POST request that will create a customer in the database if payload is correct
+	 * @param c
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.POST)
 	public Customer createUser(@RequestBody Customer c){
-		return accessor.save(c);
+		return customerAccessor.save(c);
 	}
 	
+	/**
+	 * GET request that will return one customer by their unique id
+	 * @param email
+	 * @return
+	 */
 	@RequestMapping(value="{email}", method = RequestMethod.GET)
 	public ResponseEntity<Customer> getCustomerByEmail(@PathVariable("email") String email){
-		Customer customer = accessor.findByEmail(email);
+		Customer customer = customerAccessor.findByEmail(email);
 		if(customer == null){
 			return new ResponseEntity<Customer>(HttpStatus.NOT_FOUND);
 		}
@@ -43,23 +57,32 @@ public class CustomerController {
 		}
 	}
 	
-	@RequestMapping(value="email", method=RequestMethod.PUT)
+	/**
+	 * PUT request that will update via replace the old data with the new data
+	 * @param updateCustomer
+	 * @param email
+	 * @return
+	 */
+	@RequestMapping(value="email}", method=RequestMethod.PUT)
 	public ResponseEntity<Customer> updateCustomer(@Validated @RequestBody Customer updateCustomer, @PathVariable("email") String email){
-		Customer customerData = accessor.findByEmail(email);
+		Customer customerData = customerAccessor.findByEmail(email);
 		if(customerData == null){
 			return new ResponseEntity<Customer>(HttpStatus.NOT_FOUND);
 		}
-		customerData.setEmail(updateCustomer.getEmail());
 		customerData.setFirstName(updateCustomer.getFirstName());
 		customerData.setLastName(updateCustomer.getLastName());
-		Customer updatedObject = accessor.save(customerData);
+		Customer updatedObject = customerAccessor.save(customerData);
 		
 		return new ResponseEntity<Customer>(updatedObject,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="email",method=RequestMethod.DELETE)
+	/**
+	 * DELETE request. Finds Data Object by email and if it exists will delete it.
+	 * @param email
+	 */
+	@RequestMapping(value="email}",method=RequestMethod.DELETE)
 	public void deleteTodo(@PathVariable("email") String email){
-		accessor.delete(email);
+		customerAccessor.delete(email);
 	}
 	
 	
